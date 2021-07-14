@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Ignore" Version="0.1.42" />
     <PackageReference Include="SharpZipLib" Version="1.0.0" />
   </ItemGroup>
 

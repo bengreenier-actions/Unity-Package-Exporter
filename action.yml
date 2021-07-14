@@ -1,0 +1,26 @@
+# action.yml
+name: 'Export .unitypackage from Unity Project'
+description: 'Uses Unity Package Exporter by Lachee to export a .unitypackage file from a Unity Project.'
+inputs:
+  unityProjectPath:
+    description: 'Path to the unity project'
+    required: true
+    default: './'
+  packagePath:
+    description: 'Project relative path to be packaged.'
+    required: false
+    default: 'Assets'
+  outputPackagePath:
+    description: 'Path to the output package'
+    required: false
+    default: './artifacts/output.unitypackage'
+outputs:
+  artifactsPath:
+    description: 'Path to the output package'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.unityProjectPath }}
+    - ${{ inputs.packagePath }}
+    - ${{ inputs.outputPackagePath }}

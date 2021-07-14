@@ -8,6 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
+using Ignore = Ignore.Ignore;
 
 //-project "C:\Users\TasGDS\Documents\GitHub\discord-rpc-csharp\Unity Example\\" -dir "Assets\\"
 //-project bin/ExampleProject/ -unpack package.unitypackage
@@ -20,6 +22,8 @@ namespace UnityPackageExporter
             CreatePack(args);
         }
 
+        private static readonly string PKG_IGNORE = ".unitypackageignore";
+            
         static void CreatePack(string[] args)
         { 
             Console.WriteLine(">>>> Unity Package Exporter by Lachee");
@@ -94,6 +98,18 @@ namespace UnityPackageExporter
                 return;
             }
 
+            var pkgIgnore = new global::Ignore.Ignore();
+            pkgIgnore.Add(PKG_IGNORE);
+            
+            string[] pkgIgnores;
+            try
+            {
+                pkgIgnore.Add(File.ReadAllLines(Path.Combine(unityProject, PKG_IGNORE)));
+            }
+            catch (Exception)
+            {
+            }
+
             Console.WriteLine("Packing....");
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -105,16 +121,21 @@ namespace UnityPackageExporter
                     string path = Path.Combine(unityProject, "Assets");
                     Console.WriteLine("Looking '{0}'", path);
 
-                    var files = Directory.GetFiles(path, "*", SearchOption.AllDirectories).Where(f => Path.GetExtension(f) != ".meta");
+                    var files = Directory.GetFiles(path, "*", SearchOption.AllDirectories)
+                        .Where(f => Path.GetExtension(f) != ".meta")
+                        .Where(f => !pkgIgnore.IsIgnored(f));
+                    
                     PackAssets(output, unityProject, files);
                 }
                 else
                 {
-                    Console.WriteLine("Packing Some....");                    
+                    Console.WriteLine("Packing Some....");
                     var files = directories
-                        .SelectMany(dir => Directory.GetFiles(Path.Combine(unityProject, dir), "*", SearchOption.AllDirectories))
+                        .SelectMany(dir =>
+                            Directory.GetFiles(Path.Combine(unityProject, dir), "*", SearchOption.AllDirectories))
                         .Union(assets)
-                        .Where(f => Path.GetExtension(f) != ".meta");
+                        .Where(f => Path.GetExtension(f) != ".meta")
+                        .Where(f => !pkgIgnore.IsIgnored(f));
 
                     PackAssets(output, unityProject, files);
                 }
