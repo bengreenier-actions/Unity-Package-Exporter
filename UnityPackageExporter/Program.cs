@@ -86,12 +86,6 @@ namespace UnityPackageExporter
                 return;
             }
 
-            var outDir = Path.GetDirectoryName(output);
-            if (!Directory.Exists(outDir)) {
-                Console.WriteLine("Creating missing output directory: " + outDir);
-                Directory.CreateDirectory(output);
-            }
-
             foreach(var pack in unpacks)
             {
                 Console.WriteLine("Unpacking unitypackage '{0}'", pack);
