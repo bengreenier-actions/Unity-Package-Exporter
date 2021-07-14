@@ -86,6 +86,12 @@ namespace UnityPackageExporter
                 return;
             }
 
+            var outDir = Path.GetDirectoryName(output);
+            if (!Directory.Exists(outDir)) {
+                Console.WriteLine("Creating missing output directory: " + outDir);
+                Directory.CreateDirectory(output);
+            }
+
             foreach(var pack in unpacks)
             {
                 Console.WriteLine("Unpacking unitypackage '{0}'", pack);
@@ -100,8 +106,8 @@ namespace UnityPackageExporter
 
             var pkgIgnore = new global::Ignore.Ignore();
             pkgIgnore.Add(PKG_IGNORE);
+            pkgIgnore.Add(output);
             
-            string[] pkgIgnores;
             try
             {
                 pkgIgnore.Add(File.ReadAllLines(Path.Combine(unityProject, PKG_IGNORE)));
@@ -263,7 +269,7 @@ namespace UnityPackageExporter
             string metaContents = null;
             string guidString = "";
 
-            //If the file doesnt have a meta then skip it
+            //If the file doesnt have a meta then add it
             if (!File.Exists(metaFile))
             {
                 //Meta file is missing so we have to generate it ourselves.

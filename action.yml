@@ -21,6 +21,9 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
+    - "-project"
     - ${{ inputs.unityProjectPath }}
+    - "-dir"
     - ${{ inputs.packagePath }}
+    - "-output"
     - ${{ inputs.outputPackagePath }}
