@@ -160,7 +160,7 @@ namespace UnityPackageExporter
             using (var fileStream = new FileStream(package, FileMode.Open))
             {
                 using (var gzoStream = new GZipInputStream(fileStream))
-                using (var tarStream = new TarInputStream(gzoStream))
+                using (var tarStream = new TarInputStream(gzoStream, Encoding.UTF8))
                 {
                     TarEntry tarEntry;
                     while ((tarEntry = tarStream.GetNextEntry()) != null)
@@ -230,7 +230,7 @@ namespace UnityPackageExporter
             using (var fileStream = new FileStream(packageOutput, FileMode.Create))
             {
                 using (var gzoStream = new GZipOutputStream(fileStream))
-                using (var tarStream = new TarOutputStream(gzoStream))
+                using (var tarStream = new TarOutputStream(gzoStream, Encoding.UTF8))
                 {
                     //Go over every asset, adding it
                     foreach(var asset in assets)
